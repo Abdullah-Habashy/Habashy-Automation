@@ -119,8 +119,8 @@ VIDEO_EXTS = {".mp4"}
 AUDIO_EXTS = {".wav"}
 
 # Minimum code allowed from filenames
-MIN_VIDEO_CODE  = 5071     # C5071 and above
-MIN_AUDIO_CODE  = 1249     # ZOOM1249 and above
+MIN_VIDEO_CODE  = 6342     # C5071 and above
+MIN_AUDIO_CODE  = 1254     # ZOOM1249 and above
 
 # Persistent DB for imported media (prevents duplicate imports from cards)
 COPIED_DB_PATH   = BASE_ROOT / ".copied_files_db.json"
