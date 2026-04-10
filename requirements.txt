@@ -1,0 +1,11 @@
+watchdog
+colorama
+psutil
+requests
+openpyxl
+requests-toolbelt
+python-bidi
+pyrogram
+tgcrypto
+asyncio
+pathlib

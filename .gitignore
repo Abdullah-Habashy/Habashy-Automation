@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+build/
+dist/
+*.egg-info/
+bin/
+
+# Databases & Local History (Personal)
+.copied_files_db.json
+.copied_files_db_backup.json
+used_time.json
+processed_history.txt
+
+# Telegram Sessions (Private - DO NOT UPLOAD)
+*.session
+*.session-journal
+
+# Configuration & Secrets
+# (We keep config files as templates but ignore actual credentials if possible)
+compress_config.json
+.env
+**/.env
+
+# Logs
+WatchLogs/
+*.log
+
+# Personal Data / Media Folders
+Generated_Images/
+Generated_Videos/
+Temp/
+Downloads/
+
+# Office Temp Files
+~$*.xlsx
+~$*.docx
+
+# Misc
+.DS_Store
+Thumbs.db
