@@ -49,6 +49,14 @@ from colorama import Fore, Style, init
 import psutil
 import requests
 
+try:
+    import asyncio
+    _main_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(_main_loop)
+    from pyrogram import Client
+except ImportError:
+    pass
+
 init(autoreset=True)
 
 # ========== CONFIGURATION MANAGER ==========
@@ -297,13 +305,6 @@ def send_telegram_msg(msg, target_chat_id=None, parse_mode=None):
 
 def send_telegram_file_pyrogram(file_path, caption, target_chat_id):
     import asyncio
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
-    from pyrogram import Client
     
     api_id = CFG.get("telegram_api_id")
     api_hash = CFG.get("telegram_api_hash")
@@ -320,7 +321,10 @@ def send_telegram_file_pyrogram(file_path, caption, target_chat_id):
             print()
             
     try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         loop.run_until_complete(_send())
+        loop.close()
         return True
     except Exception as e:
         logger.error(f"⚠️ Pyrogram Error: {e}")
