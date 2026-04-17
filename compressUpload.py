@@ -552,14 +552,16 @@ class FileMonitor:
         comp_p = Path(compressed_path)
         name_lower = src_p.name.lower()
         
+        is_review = "مراجعة" in name_lower
         is_abwab = "نهائي" in name_lower or "بعد التصحيح" in name_lower
+        
         out_folder = Path(CFG['output_folder_2']) if is_abwab else Path(CFG['output_folder'])
         target_chat = CFG.get("telegram_chat_id_abwab") if is_abwab else CFG.get("telegram_chat_id")
         
-        # Determine unique path in the destination folder
-        local_copy = _unique_out_path(out_folder / comp_p.name)
-
-        print(f"\n{Fore.CYAN}STEP 3: UPLOAD | Mode: {GLOBAL_UPLOAD_METHOD.upper()}")
+        # Force Telegram upload if "مراجعة" is in the name
+        effective_method = "telegram" if is_review else GLOBAL_UPLOAD_METHOD
+        
+        print(f"\n{Fore.CYAN}STEP 3: UPLOAD | Mode: {effective_method.upper()}")
         self.update_state(src, "💾 FINALIZING")
         
         try:
@@ -568,10 +570,15 @@ class FileMonitor:
             logger.info(f"📂 Saving copy next to original: {src_neighbor}")
             shutil.copy2(comp_p, src_neighbor)
             
-            # 2. Copy to Drive sync folder
-            logger.info(f"📂 Copying to Drive sync folder: {local_copy}")
-            shutil.copy2(comp_p, local_copy)
-            logger.info(f"✅ Success: File placed in Drive and Source folders.")
+            # 2. Copy to Drive sync folder ONLY if method is Google Drive
+            local_copy = None
+            if effective_method == "gdrive":
+                local_copy = _unique_out_path(out_folder / comp_p.name)
+                logger.info(f"📂 Copying to Drive sync folder: {local_copy}")
+                shutil.copy2(comp_p, local_copy)
+                logger.info(f"✅ Success: File placed in Drive and Source folders.")
+            else:
+                logger.info(f"✅ Success: File placed in Source folder. (Skipping Drive for Telegram mode)")
         except Exception as e:
             logger.error(f"❌ Failed during file placement: {e}")
             raise
@@ -583,9 +590,10 @@ class FileMonitor:
         
         file_size_mb = comp_p.stat().st_size / (1024 * 1024)
         
-        if GLOBAL_UPLOAD_METHOD == "telegram":
+        if effective_method == "telegram":
             self.update_state(src, "📤 UPLOADING (Telegram)")
-            send_telegram_file_pyrogram(str(local_copy), target_chat, f"✅ {src_p.name}\n📦 Size: {file_size_mb:.1f} MB")
+            file_to_send = str(local_copy) if local_copy else str(src_neighbor)
+            send_telegram_file_pyrogram(file_to_send, target_chat, f"✅ {src_p.name}\n📦 Size: {file_size_mb:.1f} MB")
         else:
             self.update_state(src, "☁️ SYNCING (G-Drive)")
             # Path is already in local sync folder
