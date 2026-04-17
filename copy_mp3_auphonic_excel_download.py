@@ -119,7 +119,7 @@ VIDEO_EXTS = {".mp4"}
 AUDIO_EXTS = {".wav"}
 
 # Minimum code allowed from filenames
-MIN_VIDEO_CODE  = 6342     # C5071 and above
+MIN_VIDEO_CODE  = 5082     # C5071 and above
 MIN_AUDIO_CODE  = 1254     # ZOOM1249 and above
 
 # Persistent DB for imported media (prevents duplicate imports from cards)
@@ -1506,4 +1506,3 @@ def main():
 if __name__ == "__main__":
     main()
     input("Press Enter to exit...")
-2
