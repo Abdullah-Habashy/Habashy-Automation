@@ -297,9 +297,18 @@ def send_telegram_msg(msg, target_chat_id=None, parse_mode=None):
 
 def send_telegram_file_pyrogram(file_path, caption, target_chat_id):
     import asyncio
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
     from pyrogram import Client
-    api_id, api_hash, bot_token = CFG.get("telegram_api_id"), CFG.get("telegram_api_hash"), CFG.get("telegram_token")
+    
+    api_id = CFG.get("telegram_api_id")
+    api_hash = CFG.get("telegram_api_hash")
     if not api_id or not api_hash: return False
+    
     async def _send():
         async def progress(current, total):
             print(f"\r{Fore.YELLOW}🚀 Telegram Upload: {current * 100 / total:.1f}%", end="")
@@ -309,14 +318,9 @@ def send_telegram_file_pyrogram(file_path, caption, target_chat_id):
             except: chat_id_to_use = target_chat_id
             await app.send_document(chat_id=chat_id_to_use, document=file_path, caption=caption, file_name=Path(file_path).name, progress=progress)
             print()
+            
     try:
-        import asyncio
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            loop.run_until_complete(_send())
-        finally:
-            loop.close()
+        loop.run_until_complete(_send())
         return True
     except Exception as e:
         logger.error(f"⚠️ Pyrogram Error: {e}")
