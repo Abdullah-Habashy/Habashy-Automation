@@ -1342,10 +1342,9 @@ def main():
         log(f"❌ BASE ROOT does not exist: {BASE_ROOT}", "ERR")
         sys.exit(1)
 
-    # Early check on Auphonic credit before any copying
-    if not ensure_min_total_minutes(240):
-        # sys.exit(1)
-        log("⚠️ Insufficient Auphonic credits, but continuing as requested (Import + MP3 conversion)...", "WARN")
+    # Early check on Auphonic credit before any copying (BYPASSED)
+    # if not ensure_min_total_minutes(240):
+    #     log("⚠️ Insufficient Auphonic credits, but continuing as requested (Import + MP3 conversion)...", "WARN")
 
     # Wait until both camera and card are ready (not just one)
     # This now scans all drives dynamically and returns the actual paths
