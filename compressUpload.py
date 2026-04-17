@@ -498,6 +498,10 @@ class FileMonitor:
 
     def upload_worker(self):
         """Worker thread dedicated ONLY to upload/sync tasks."""
+        import asyncio
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
         while not self.shutdown_event.is_set():
             try: original_src, compressed_path = self.upload_queue.get(timeout=1)
             except Empty: continue
